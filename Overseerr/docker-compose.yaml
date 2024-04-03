@@ -24,3 +24,11 @@ services:
   ## HTTP Services
   - "traefik.http.routers.overseerr-rtr.service=overseerr-svc"
   - "traefik.http.services.overseerr-svc.loadbalancer.server.port=5055"
+  - "traefik.docker.network=proxy"
+networks:
+      proxy:
+
+networks:
+  proxy:
+    external: true
+  
