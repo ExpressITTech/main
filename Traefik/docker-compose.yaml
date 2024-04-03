@@ -11,9 +11,9 @@ services:
        proxy:
     ports:
       - 80:80
-      - 81:81 # external http
+      - 81:81 # external http only use if you plan to allow ingress
       - 443:443
-      - 444:444 # external https
+      - 444:444 # external https only use if you plan to allow ingress
     environment:
       - CF_API_EMAIL=your@email.com
       - CF_DNS_API_TOKEN=super-secure-token
@@ -30,7 +30,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.traefik.entrypoints=http" # restricts dashboard to internal entrypoint
       - "traefik.http.routers.traefik.rule=Host(`traefik-dashboard.yourdomain.co.uk`)" # if you want a internal domain, get the wildcard cert for it and then choose traefik-dashboard.home.yourdomain.co.uk
-      - "traefik.http.middlewares.traefik-auth.basicauth.users=admin:password-hash"
+      - "traefik.http.middlewares.traefik-auth.basicauth.users=admin:password-hash" # you will need to create this 
       - "traefik.http.middlewares.traefik-https-redirect.redirectscheme.scheme=https"
       - "traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto=https"
       - "traefik.http.routers.traefik.middlewares=traefik-https-redirect"
