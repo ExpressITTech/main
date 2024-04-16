@@ -1,0 +1,20 @@
+---
+# For configuration options and examples, please see:
+# https://gethomepage.dev/latest/configs/services
+# icons found here https://github.com/walkxcode/dashboard-icons
+
+#below are some examples
+
+#uncomment to play around with these 
+
+#- Containers:
+ #   - Portainer:
+  #      icon: portainer.svg
+   #     href: "<https://<your ip or hostaddress>:9443>"
+    #    description: local
+     #   widget:
+      #      type: portainer
+       #     url: "https://<your ip or hostaddress>:9443"
+        #    env: 2
+         #   key: "your key"
+
