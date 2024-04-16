@@ -1,0 +1,33 @@
+version: '3'
+services:
+  tautulli:
+    image: ghcr.io/tautulli/tautulli
+    container_name: tautulli
+    restart: unless-stopped
+    volumes:
+      - /home/expressit/docker/tautulli:/config
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/London
+    security_opt:
+      - no-new-privileges:true
+    #ports:  - not needed due to traefik if not using traefik uncomment these lines and comment labels out
+     # - 8181:8181
+    networks:
+      proxy:
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.tautulli.entrypoints=http"
+      - "traefik.http.routers.tautulli.rule=Host(`uptime-kuma.express-it-home.uk`)"
+      - "traefik.http.middlewares.tautulli-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.tautulli.middlewares=uptime-kuma-https-redirect"
+      - "traefik.http.routers.tautulli-secure.entrypoints=https"
+      - "traefik.http.routers.tautulli-secure.rule=Host(`uptime-kuma.express-it-home.uk`)"
+      - "traefik.http.routers.tautulli-secure.tls=true"
+      - "traefik.http.routers.tautulli-secure.service=uptime-kuma"
+      - "traefik.http.services.tautulli.loadbalancer.server.port=3001"
+      - "traefik.docker.network=proxy"
+networks:
+  proxy:
+    external: true
