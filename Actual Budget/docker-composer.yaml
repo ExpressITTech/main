@@ -1,0 +1,46 @@
+version: '3'
+services:
+  actual_server:
+    image: docker.io/actualbudget/actual-server:latest
+   # ports:
+      # This line makes Actual available at port 5006 of the device you run the server on,
+      # i.e. http://localhost:5006. You can change the first number to change the port, if you want.
+    #  - '5006:5006'
+    environment:
+      # Uncomment any of the lines below to set configuration options.
+      # - ACTUAL_HTTPS_KEY=/data/selfhost.key
+      # - ACTUAL_HTTPS_CERT=/data/selfhost.crt
+       - ACTUAL_PORT=5006
+       - ACTUAL_UPLOAD_FILE_SYNC_SIZE_LIMIT_MB=20
+       - ACTUAL_UPLOAD_SYNC_ENCRYPTED_FILE_SYNC_SIZE_LIMIT_MB=50
+      # - ACTUAL_UPLOAD_FILE_SIZE_LIMIT_MB=20
+      # See all options and more details at https://actualbudget.github.io/docs/Installing/Configuration
+      # !! If you are not using any of these options, remove the 'environment:' tag entirely.
+
+    volumes:
+      # Change './actual-data' below to the path to the folder you want Actual to store its data in on your server.
+      # '/data' is the path Actual will look for its files in by default, so leave that as-is.
+      - ./actual-data:/data
+    restart: unless-stopped
+    networks:
+      proxy:
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.actualbudget.entrypoints=http"
+      - "traefik.http.routers.actualbudget.rule=Host(`YOURURL`)"
+      - "traefik.http.middlewares.actualbudget-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.actualbudget.middlewares=actualbudget-https-redirect"
+      - "traefik.http.routers.actualbudget-secure.entrypoints=https"
+      - "traefik.http.routers.actualbudget-secure.rule=Host(`YOURURL`)"
+      - "traefik.http.routers.actualbudget-secure.tls=true"
+      - "traefik.http.routers.actualbudget-secure.service=actualbudget"
+      - "traefik.http.services.actualbudget.loadbalancer.server.port=5006"
+     # - "traefik.http.routers.homepage-secure.middlewares=default-whitelist@file" # uncomment if you want to use a Traefik whitelist to restrict access
+     # - "traefik.http.routers.homepage-secure.middlewares=authelia@docker" # uncomment if you want to use authelia
+      - "traefik.docker.network=proxy"
+    security_opt:
+      - no-new-privileges:true
+
+networks:
+  proxy:
+    external: true
