@@ -1,0 +1,43 @@
+version: "3.4"
+
+services:
+  homebox:
+    image: ghcr.io/hay-kot/homebox:latest
+#   image: ghcr.io/hay-kot/homebox:latest-rootless
+    container_name: homebox
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    networks:
+       proxy:
+    environment:
+    - HBOX_LOG_LEVEL=info
+    - HBOX_LOG_FORMAT=text
+    - HBOX_WEB_MAX_UPLOAD_SIZE=10
+    volumes:
+      - homebox-data:/data/
+    #ports:
+     # - 3100:7745
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.homebox.entrypoints=http"
+      - "traefik.http.routers.homebox.rule=Host(`homebox.express-it-home.uk`)"
+      - "traefik.http.routers.homebox.middlewares=default-whitelist@file"
+      - "traefik.http.middlewares.homebox-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.homebox.middlewares=homepage-https-redirect"
+      - "traefik.http.routers.homebox-secure.entrypoints=https"
+      - "traefik.http.routers.homebox-secure.rule=Host(`homebox.express-it-home.uk`)"
+      - "traefik.http.routers.homebox-secure.tls=true"
+      - "traefik.http.routers.homebox-secure.service=homebox"
+      - "traefik.http.services.homebox.loadbalancer.server.port=7745"
+     # - "traefik.http.routers.homebox-secure.middlewares=default-whitelist@file" # uncomment if you want to use a Traefik whitelist to restrict access
+     # - "traefik.http.routers.homebox-secure.middlewares=authelia@docker" # uncomment if you want to use authelia
+      - "traefik.docker.network=proxy"
+
+networks:
+  proxy:
+    external: true
+volumes:
+   homebox-data:
+     driver: local
+
