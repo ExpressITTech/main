@@ -1,0 +1,11 @@
+To Check Permissions 
+
+ls -ld /mnt/nextcloud/files
+
+to change ownership
+
+sudo chown -R 33:33 /mnt/nextcloud/files
+
+Example fstab file
+
+//XXX.XXX.XXX.XXX/Documents /mnt/nextcloud/files cifs rw,mfsymlinks,seal,credentials=/<pathto>/<credentials>/.smbcredentials,uid=33,gid=0,file_mode=0770,dir_mode=0770 0 0
